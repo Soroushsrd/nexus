@@ -24,7 +24,7 @@ Before you can use this code, ensure you have the following installed:
 
 1. **Clone the Repository**
    ```sh
-   git clone https://github.com/yourusername/chatgpt-rust-api-client.git
+   git clone https://github.com/Soroushsrd/nexus.git
    cd chatgpt-rust-api-client
    ```
 
