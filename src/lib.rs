@@ -90,7 +90,6 @@ pub async fn completion(api_key: &str, messages: Vec<Message>, temperature: f64)
         .await?;
 
     let response_text = response.text().await?;
-    println!("Raw response body: {}", response_text);
 
     let response_body: ChatCompletionResponse = serde_json::from_str(&response_text)?;
 
