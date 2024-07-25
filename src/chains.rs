@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use crate::Message;
 
 pub trait Step {
     fn execute(&self, input: &str) -> String;
@@ -36,7 +36,7 @@ pub struct Prompt {
 
 impl Prompt {
     pub fn new(template: String) -> Self{
-        let mut variables  = HashMap::new();
+        let  variables  = HashMap::new();
         Prompt{
             template,
             variables,
@@ -44,15 +44,36 @@ impl Prompt {
     }
 
     pub fn add_variable(mut self, key:String,value:String)-> Self{
-        self.variables.insert(key.to_string(), value.to_string());
+        self.variables.insert(key, value);
         self
     }
-    pub fn render(&self)-> String{
+    // pub fn render(&self,) -> String{
+    //     let mut rendered = self.template.clone();
+    //     for (key, value) in &self.variables {
+    //         let placeholder = format!(rendered, key);
+    //         rendered = rendered.replace(&placeholder, value);
+    //     }
+    //     rendered
+    // }
+    pub fn render(&self) -> String {
         let mut rendered = self.template.clone();
         for (key, value) in &self.variables {
-            rendered = rendered.replace(&format!("{{{{{}}}}}", key), value);
+            let mut placeholder = String::new();
+            placeholder.push_str("{");
+            placeholder.push_str(key);
+            placeholder.push_str("}");
+            println!("Placeholder: {}", placeholder);
+            println!("Before replace: {}", rendered);
+            rendered = rendered.replace(&placeholder, value);
+            println!("After replace: {}", rendered);
         }
         rendered
+    }
+    pub fn to_message(&self) -> Message{
+        Message{
+            role: "user".to_string(),
+            content: self.render()
+        }
     }
 }
 
@@ -76,3 +97,33 @@ impl Step for LLM {
 
 //might need a parser for the output here. not sure yet
 // serde crate does take care of a huge part out outputs
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_prompt(){
+        let mut temp = Prompt::new("hello {world} {information}".to_string())
+            .add_variable("world".to_string(), ",World".to_string())
+            .add_variable("information".to_string(),"armenian rugs are different than persian rugs".to_string());
+
+        let expected_output= "hello ,World armenian rugs are different than persian rugs".to_string();
+
+        assert_eq!(temp.render(),expected_output);
+
+    }
+
+    #[test]
+    fn test_prompt_to_message() {
+        let template = "With the information provided, answer the question: \n {question} \n {information}";
+        let expected_message = Message {
+            role: "user".to_string(),
+            content: "With the information provided, answer the question: \n tell me about armenian rugs \n armenian rugs are different than persian rugs".to_string(),
+        };
+        let prompt = Prompt::new(template.to_string())
+            .add_variable("question".to_string(), "tell me about armenian rugs".to_string())
+            .add_variable("information".to_string(), "armenian rugs are different than persian rugs".to_string());
+        assert_eq!(prompt.to_message(), expected_message);
+    }
+}
