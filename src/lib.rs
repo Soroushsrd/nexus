@@ -1,4 +1,4 @@
-mod chains;
+pub mod chains;
 
 use reqwest::Client;
 use serde::{Deserialize,Serialize};
@@ -7,7 +7,7 @@ use tokio;
 use dotenv::dotenv;
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize,PartialEq,Debug)]
 pub struct Message {
     role : String,
     content: String,
@@ -74,8 +74,6 @@ pub async fn completion(api_key: &str, messages: Vec<Message>, temperature: f64)
         panic!("Temperature must be between 0 and 1 and written with decimals. \n for example: 0.5");
     }
 
-    dotenv().ok();
-
     let client = Client::new();
 
     let request_body = ChatCompletionRequest {
@@ -124,7 +122,7 @@ mod tests {
             },
         ];
 
-        let result = completion(&api_key, messages).await;
+        let result = completion(&api_key, messages,0.5).await;
         assert!(result.is_ok());
         println!("Response: {}", result.unwrap());
     }
