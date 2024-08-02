@@ -126,4 +126,3 @@ mod tests {
         println!("Response: {}", result.unwrap());
     }
 }
-
