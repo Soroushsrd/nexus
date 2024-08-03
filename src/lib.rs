@@ -1,4 +1,5 @@
 pub mod chains;
+pub mod embeddings;
 
 use reqwest::Client;
 use serde::{Deserialize,Serialize};
