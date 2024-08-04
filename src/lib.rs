@@ -78,7 +78,7 @@ pub async fn completion(api_key: &str, messages: Vec<Message>, temperature: f64)
     let client = Client::new();
 
     let request_body = ChatCompletionRequest {
-        model: "gpt-4".to_string(),
+        model: "gpt-4o-mini".to_string(),
         messages,
         temperature
     };
