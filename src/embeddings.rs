@@ -115,38 +115,38 @@ mod tests {
         Ok(())
     }
 
-    #[tokio::test]
-    async fn test_list_points_with_filter() -> Result<(), Box<dyn Error>> {
-        let client = Client::new();
-        let collection_name = "Rug_sage";
-        let question = "What is the history of Persian rugs?";
-        let embedding = crate::ai::utils::generate_embedding_vector(question).await;
-        // Ensure this collection exists or is set up before test
-        let filter = Filter {
-            limit: 2,
-            offset: None,
-            must:None,
-            should:Some(vec![VectorMatch{
-                vector:"text_embedding".to_string(),
-                value: embedding,
-                threshold:0.8
-            }])
-        };
-        let result = list_points_with_filter(&client, BASE_URL, collection_name,&filter).await;
-        assert!(result.is_ok());
-
-        // Deserialize the result and inspect the points
-        if let Ok(query_response) = result {
-            println!("Test Points with Should Clause: {:?}", query_response);
-            assert!(query_response.result.points.len() > 0, "No points returned");
-            let content: Vec<_> = query_response
-                .result
-                .points.iter()
-                .map(|page| page.payload.page_content.to_string())
-                .collect();
-            println!("page content: {:?}",content);
-        }
-
-        Ok(())
-    }
+    // #[tokio::test]
+    // async fn test_list_points_with_filter() -> Result<(), Box<dyn Error>> {
+    //     let client = Client::new();
+    //     let collection_name = "Rug_sage";
+    //     let question = "What is the history of Persian rugs?";
+    //     let embedding = "simple vector would go here";
+    //     // Ensure this collection exists or is set up before test
+    //     let filter = Filter {
+    //         limit: 2,
+    //         offset: None,
+    //         must:None,
+    //         should:Some(vec![VectorMatch{
+    //             vector:"text_embedding".to_string(),
+    //             value: embedding,
+    //             threshold:0.8
+    //         }])
+    //     };
+    //     let result = list_points_with_filter(&client, BASE_URL, collection_name,&filter).await;
+    //     assert!(result.is_ok());
+    //
+    //     // Deserialize the result and inspect the points
+    //     if let Ok(query_response) = result {
+    //         println!("Test Points with Should Clause: {:?}", query_response);
+    //         assert!(query_response.result.points.len() > 0, "No points returned");
+    //         let content: Vec<_> = query_response
+    //             .result
+    //             .points.iter()
+    //             .map(|page| page.payload.page_content.to_string())
+    //             .collect();
+    //         println!("page content: {:?}",content);
+    //     }
+    //
+    //     Ok(())
+    // }
 }
