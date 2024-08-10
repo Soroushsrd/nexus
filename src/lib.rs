@@ -1,16 +1,15 @@
 pub mod chains;
 pub mod embeddings;
 
+use dotenv::dotenv;
 use reqwest::Client;
-use serde::{Deserialize,Serialize};
+use serde::{Deserialize, Serialize};
 use std::env;
 use tokio;
-use dotenv::dotenv;
 
-
-#[derive(Serialize, Deserialize,PartialEq,Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Message {
-    role : String,
+    role: String,
     content: String,
 }
 
@@ -18,12 +17,12 @@ pub struct Message {
 pub struct ChatCompletionRequest {
     model: String,
     messages: Vec<Message>,
-    temperature: f64
+    temperature: f64,
 }
 
 #[derive(Deserialize)]
 pub struct MessageResponse {
-    content: String
+    content: String,
 }
 
 #[derive(Deserialize)]
@@ -40,39 +39,44 @@ pub struct Usage {
     total_tokens: u32,
 }
 #[derive(Deserialize)]
-pub struct  ChatCompletionResponse {
+pub struct ChatCompletionResponse {
     id: String,
     object: String,
     created: u64,
-    model:String,
+    model: String,
     choices: Vec<Choice>,
     usage: Usage,
 }
 
 impl ChatCompletionResponse {
-    pub fn usage(&self) -> &Usage{
+    pub fn usage(&self) -> &Usage {
         &self.usage
     }
     pub fn choices(&self) -> &Vec<Choice> {
         &self.choices
     }
-
 }
 
 impl Usage {
-    pub fn prompt_tokens(&self) ->u32{
+    pub fn prompt_tokens(&self) -> u32 {
         self.prompt_tokens
     }
-    pub fn completion_tokens(&self) ->u32{
+    pub fn completion_tokens(&self) -> u32 {
         self.completion_tokens
     }
-    pub fn total_tokens(&self) ->u32{
+    pub fn total_tokens(&self) -> u32 {
         self.total_tokens
     }
 }
-pub async fn completion(api_key: &str, messages: Vec<Message>, temperature: f64) -> Result<String, Box<dyn std::error::Error>> {
+pub async fn completion(
+    api_key: &str,
+    messages: Vec<Message>,
+    temperature: f64,
+) -> Result<String, Box<dyn std::error::Error>> {
     if temperature < 0.0 || temperature > 1.0 {
-        panic!("Temperature must be between 0 and 1 and written with decimals. \n for example: 0.5");
+        panic!(
+            "Temperature must be between 0 and 1 and written with decimals. \n for example: 0.5"
+        );
     }
 
     let client = Client::new();
@@ -80,7 +84,7 @@ pub async fn completion(api_key: &str, messages: Vec<Message>, temperature: f64)
     let request_body = ChatCompletionRequest {
         model: "gpt-4o-mini".to_string(),
         messages,
-        temperature
+        temperature,
     };
 
     let response = client
@@ -122,7 +126,7 @@ mod tests {
             },
         ];
 
-        let result = completion(&api_key, messages,0.5).await;
+        let result = completion(&api_key, messages, 0.5).await;
         assert!(result.is_ok());
         println!("Response: {}", result.unwrap());
     }
