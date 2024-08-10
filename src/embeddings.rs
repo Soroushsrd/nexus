@@ -95,7 +95,7 @@ mod tests {
     use super::*;
     use reqwest::Client;
 
-    // Ensure this is the correct URL for your running Qdrant instance
+
     const BASE_URL: &str = "http://localhost:6333/collections";
 
     #[tokio::test]
@@ -109,7 +109,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_collection_info() -> Result<(), Box<dyn Error>> {
         let client = Client::new();
-        let collection_name = "Rug_sage"; // Ensure this collection exists or is set up before test
+        let collection_name = "name_of_collection";
         let result = get_collection_info(&client, BASE_URL, collection_name).await;
         assert!(result.is_ok());
         Ok(())
@@ -135,7 +135,7 @@ mod tests {
     //     let result = list_points_with_filter(&client, BASE_URL, collection_name,&filter).await;
     //     assert!(result.is_ok());
     //
-    //     // Deserialize the result and inspect the points
+    //
     //     if let Ok(query_response) = result {
     //         println!("Test Points with Should Clause: {:?}", query_response);
     //         assert!(query_response.result.points.len() > 0, "No points returned");
